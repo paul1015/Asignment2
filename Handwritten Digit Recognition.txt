@@ -1,0 +1,51 @@
+from __future__ import print_function
+import keras
+from keras.datasets import mnist
+from keras.models import Sequential
+from keras.layers import Dense, Dropout
+from keras.optimizers import RMSprop
+
+(xtrain, ytrain), (xtest, ytest) = mnist.load_data()
+
+xtrain = xtrain.reshape(60000, 784)
+xtest = xtest.reshape(10000, 784)
+#reshape
+
+xtrain = xtrain.astype('float32')
+xtest = xtest.astype('float32')
+
+xtrain /= 255
+xtest /= 255
+
+#prepare
+
+ytrain = keras.utils.to_categorical(ytrain, 20)
+ytest = keras.utils.to_categorical(ytest, 20)
+
+#ont-hot coding convert
+
+model = Sequential()
+model.add(Dense(20, activation='relu', input_shape=(784,)))
+model.add(Dense(20, activation='softmax'))
+
+
+#module design
+
+model.summary()
+
+# print processing
+model.compile(loss='categorical_crossentropy',
+              optimizer=RMSprop(),
+              metrics=['accuracy'])
+
+history = model.fit(xtrain, ytrain,
+                    batch_size=200,
+                    epochs=20,
+                    verbose=1,
+                    validation_data=(xtest, ytest))
+#run 
+score = model.evaluate(xtest, ytest, verbose=0)
+print('test lost:', score[0])
+print('test accuracy:', score[1])
+
+#print result
